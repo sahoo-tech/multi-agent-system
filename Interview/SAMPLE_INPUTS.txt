@@ -1,0 +1,211 @@
+SAMPLE INPUTS FOR MULTI-AGENT DOCUMENT PROCESSING SYSTEM
+========================================================
+
+API Endpoint: POST http://localhost:8000/intake/
+
+=== EMAIL SAMPLES ===
+
+1. CUSTOMER COMPLAINT (copy this into email_body parameter):
+-----------------------------------------------------------
+From: angry.customer@company.com
+To: support@ourcompany.com
+Subject: URGENT: Defective Product - Demand Immediate Refund!
+
+I am absolutely furious about the defective product I received. This is completely unacceptable and I demand an immediate refund. Your company's quality control is terrible and I will be filing a complaint with the Better Business Bureau if this is not resolved immediately.
+
+The product arrived damaged and does not work as advertised. I want my money back NOW!
+
+Customer ID: CUST-12345
+Order Number: ORD-67890
+
+
+2. RFQ REQUEST (copy this into email_body parameter):
+----------------------------------------------------
+From: procurement@bigcorp.com
+To: sales@ourcompany.com
+Subject: RFQ - Software Development Services
+
+Hello,
+
+We are seeking quotes for a software development project and would like to request a formal quote (RFQ) for the following services:
+
+- Web application development
+- Database design and implementation
+- 6-month maintenance contract
+
+Project timeline: 3 months
+Budget range: $50,000 - $100,000
+
+Please provide your detailed proposal by end of week.
+
+Thanks,
+Mike Chen
+Procurement Manager
+
+
+3. COMPLIANCE INQUIRY (copy this into email_body parameter):
+-----------------------------------------------------------
+From: compliance@healthcare.com
+To: info@ourcompany.com
+Subject: HIPAA Compliance Requirements
+
+Dear Team,
+
+We need to ensure our systems meet HIPAA compliance requirements for handling patient data. Can you provide documentation on how your platform addresses:
+
+1. Data encryption standards
+2. Access control mechanisms
+3. Audit trail capabilities
+4. GDPR compliance for international patients
+
+This is critical for our upcoming audit.
+
+Best regards,
+Dr. Lisa Wang
+Compliance Officer
+
+
+=== JSON SAMPLES ===
+
+4. STANDARD INVOICE (copy this into json_body parameter):
+--------------------------------------------------------
+{
+  "id": "FB-INV-2024-001",
+  "type": "invoice",
+  "customer": {
+    "name": "Acme Corporation",
+    "email": "billing@acme.com",
+    "address": "123 Business St, City, State 12345"
+  },
+  "items": [
+    {
+      "description": "Software License",
+      "quantity": 5,
+      "unit_price": 299.99,
+      "total": 1499.95
+    },
+    {
+      "description": "Support Services",
+      "quantity": 1,
+      "unit_price": 500.00,
+      "total": 500.00
+    }
+  ],
+  "total_amount": 1999.95,
+  "currency": "USD",
+  "date": "2024-01-15",
+  "due_date": "2024-02-15"
+}
+
+
+5. HIGH-VALUE INVOICE (copy this into json_body parameter):
+----------------------------------------------------------
+{
+  "id": "FB-INV-2024-BIG-001",
+  "type": "invoice",
+  "customer": {
+    "name": "Enterprise Client LLC",
+    "email": "billing@enterprise.com",
+    "address": "456 Corporate Blvd, Business City, BC 67890"
+  },
+  "items": [
+    {
+      "description": "Enterprise Software License",
+      "quantity": 100,
+      "unit_price": 500.00,
+      "total": 50000.00
+    },
+    {
+      "description": "Implementation Services",
+      "quantity": 200,
+      "unit_price": 200.00,
+      "total": 40000.00
+    }
+  ],
+  "total_amount": 90000.00,
+  "currency": "USD",
+  "date": "2024-01-15",
+  "due_date": "2024-02-15"
+}
+
+
+6. ANOMALOUS DATA (copy this into json_body parameter):
+------------------------------------------------------
+{
+  "customer_name": "Test Company",
+  "amount": 5000.00,
+  "description": "This JSON is missing required 'id' and 'type' fields",
+  "date": "2024-01-15"
+}
+
+
+7. RFQ JSON (copy this into json_body parameter):
+------------------------------------------------
+{
+  "id": "RFQ-2024-003",
+  "type": "rfq",
+  "requester": {
+    "company": "Global Manufacturing Inc",
+    "contact": "john.doe@globalmanuf.com",
+    "phone": "+1-555-0123"
+  },
+  "requirements": [
+    {
+      "item": "Custom Software Development",
+      "specifications": "E-commerce platform with inventory management",
+      "quantity": 1,
+      "timeline": "6 months"
+    }
+  ],
+  "budget_range": {
+    "min": 75000,
+    "max": 150000,
+    "currency": "USD"
+  },
+  "deadline": "2024-02-01"
+}
+
+
+=== QUICK TEST COMMANDS ===
+
+Using curl:
+----------
+# Test complaint email
+curl -X POST "http://localhost:8000/intake/" -F "email_body=From: test@example.com
+Subject: Complaint about service
+I am very angry about the poor service quality!"
+
+# Test invoice JSON
+curl -X POST "http://localhost:8000/intake/" -F 'json_body={"id":"TEST-001","type":"invoice","amount":1500.00}'
+
+
+Using Python:
+-------------
+import requests
+
+# Test email
+response = requests.post(
+    "http://localhost:8000/intake/",
+    data={"email_body": "From: customer@example.com\nSubject: RFQ for software\nWe need a quote for development."}
+)
+print(response.json())
+
+# Test JSON
+response = requests.post(
+    "http://localhost:8000/intake/",
+    data={"json_body": '{"id":"TEST-002","type":"rfq","budget":50000}'}
+)
+print(response.json())
+
+
+=== EXPECTED BEHAVIORS ===
+
+Sample 1 (Complaint): Should trigger CRM escalation due to angry tone
+Sample 2 (RFQ): Should be classified as RFQ intent
+Sample 3 (Compliance): Should detect HIPAA/GDPR keywords
+Sample 4 (Invoice): Should validate against FlowBit schema
+Sample 5 (High-value): Should trigger risk alert for amount >$10k
+Sample 6 (Anomalous): Should flag missing required fields
+Sample 7 (RFQ JSON): Should be processed as structured RFQ data
+
+Check console logs and memory.db for processing results!

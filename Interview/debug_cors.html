@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug CORS</title>
+</head>
+<body>
+    <h1>Debug CORS Issue</h1>
+    <button onclick="testFetch()">Test Fetch</button>
+    <div id="result"></div>
+
+    <script>
+        async function testFetch() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                console.log('Starting fetch request...');
+                
+                const formData = new FormData();
+                formData.append('json_body', '{"test": "data", "type": "invoice"}');
+                
+                console.log('FormData created:', formData);
+                
+                const response = await fetch('http://localhost:8000/intake/', {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'cors',
+                });
+                
+                console.log('Response received:', response);
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Data parsed:', data);
+                
+                resultDiv.innerHTML = `<pre>Success!\n${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                console.error('Error occurred:', error);
+                resultDiv.innerHTML = `Error: ${error.message}<br>Check console for details.`;
+            }
+        }
+    </script>
+</body>
+</html>
